@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,16 +15,149 @@
 
 	<style>
 		body {
-      margin:0;
-			margin-left:45px;
-			padding:0;
+			margin: 0;
+			margin-left: 45px;
+			padding: 0;
 			overflow: hidden;
 		}
+
 		canvas {
-			margin:auto;
+			margin: auto;
+		}
+
+		table,
+		td,
+		th {
+			border: 1px solid #999;
+			border-spacing: 0;
+			vertical-align: top;
 		}
 	</style>
 </head>
+
 <body>
+	<div id='loader'>
+
+	</div>
+	<table>
+		<tr>
+			<th>Imagem</th>
+			<th>Processamento</th>
+			<th>Máscaras de Convolução</th>
+		</tr>
+		<tr>
+			<td>
+				<button onclick="resetImage();">Resetar Imagem</button>
+				<br>
+				<button onclick="generateBWImage();">Preto e Branco</button>
+			</td>
+			<td>
+				<button onclick="generateBinaryImage();">Binarizar</button>
+				<label for="limiar">Limiar:</label>
+				<input type="number" min="0" max="255" value="128" id="limiar">
+
+				<br>
+
+				<button onclick="generateQuantizedImage();">Quantizar</button>
+				<label for="limiar">Tons:</label>
+				<input type="number" min="0" max="255" value="8" id="tons">
+
+				<br>
+
+				<button onclick="generateEqualizedImage();">Equalizar</button>
+			</td>
+			<td>
+				<label for="kernel">Customizado:</label>
+				<textarea cols=40 rows="2" id="kernel">{"kernel":[[0,0,0],[0,1,0],[0,0,0]], "normalizer":1, "bias":0}</textarea>
+				<button onclick="kernelImage();">Rodar</button>
+
+				<br> Edge:
+				<button onclick="kernelImage(
+								[[1,0,-1],
+								[0,0,0],
+								[-1,0,1]],1,127);">Edge detection</button>
+				<button onclick="kernelImage(
+								[[-1,-1,-1],
+								[-1,8,-1],
+								[-1,-1,-1]]);">Outline</button>
+				<button onclick="kernelImage(
+								[[1,2,-1],
+								[2,0,-2],
+								[1,-2,-1]], 0.25, 127);">Sobel</button>
+
+				<br> Edge LaPlace:
+				<button onclick="kernelImage(
+								[[0,-1,0],
+								[-1,4,-1],
+								[0,-1,0]]);">Small</button>
+				<button onclick="kernelImage(
+								[[-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1],
+								[-1,-1,24,-1,-1],
+								[-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1]]);">Medium</button>
+				<button onclick="kernelImage(
+								[[-1,-1,-1,-1,-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1,-1,-1,-1,-1],
+								[-1,-1,-1,8,8,8,-1,-1,-1],
+								[-1,-1,-1,8,8,8,-1,-1,-1],
+								[-1,-1,-1,8,8,8,-1,-1,-1],
+								[-1,-1,-1,-1,-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1,-1,-1,-1,-1],
+								[-1,-1,-1,-1,-1,-1,-1,-1,-1]]);">Big</button>
+
+				<br> Blur:
+				<button onclick="kernelImage(
+								[[1,1,1],
+								[1,1,1],
+								[1,1,1]],0.1112);">small average</button>
+				<button onclick="kernelImage(
+								[[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1],
+								[1,1,1,1,1,1,1]],0.0204);">big average</button>
+				<button onclick="kernelImage(
+								[[.0625,.125,.0625],
+								[.125,.25,.125],
+								[.0625,.125,.0625]]);">gauss</button>
+				<button onclick="kernelImage(
+								[[1, 0, 0, 0, 0, 0, 0, 0, 0],
+								[0, 1, 0, 0, 0, 0, 0, 0, 0],
+								[0, 0, 1, 0, 0, 0, 0, 0, 0],
+								[0, 0, 0, 1, 0, 0, 0, 0, 0],
+								[0, 0, 0, 0, 1, 0, 0, 0, 0],
+								[0, 0, 0, 0, 0, 1, 0, 0, 0],
+								[0, 0, 0, 0, 0, 0, 1, 0, 0],
+								[0, 0, 0, 0, 0, 0, 0, 1, 0],
+								[0, 0, 0, 0, 0, 0, 0, 0, 1]],0.1112);">Motion blur</button>
+
+
+				<br> Outros:
+				<button onclick="kernelImage(
+								[[-2,-1,0],
+								[-1,1,1],
+								[0,1,2]]);">Emboss</button>
+				<button onclick="kernelImage(
+								[[0,-1,0],
+								[-1,5,-1],
+								[0,-1,0]]);">Sharpen</button>
+				<button onclick="kernelImage(
+								[[0,0,0],
+								[0,1.1,0],
+								[0,0,0]]);">Lighten</button>
+				<br>
+
+			</td>
+		</tr>
+	</table>
+	<div id='center'>
+
+	</div>
+
 </body>
+
 </html>

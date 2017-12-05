@@ -1,6 +1,7 @@
 {
   "name": "Playground",
   "projects": [
-    "gameOfLife"
+    "gameOfLife",
+    "imageProcessor"
   ]
 }

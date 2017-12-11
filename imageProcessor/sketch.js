@@ -368,20 +368,25 @@ function resetImage() {
 
 function loadImageFile(file) {
 	if (file.type == 'image')
-		originalImage = loadImage(file.data, () => {
+		originalImage = loadImage(file.data, initImage)
+}
 
-			//Força a imagem a ter obrigatoriamente 600px de largura (por causa das coisas da interface)
-			if (originalImage.height > 600)
-				originalImage.resize(0, 600)
-			if (originalImage.width > 600)
-				originalImage.resize(600, 0)
+function loadSampleImage() {
+	originalImage = loadImage(document.getElementById('samplesUrls').value, initImage)
+}
 
-			//Cria uma copia da imagem carregada, é nela que vamos fazer o processamento
-			myImage = createImage(originalImage.width, originalImage.height)
-			myImage.loadPixels()
+function initImage() {
+	//Força a imagem a ter obrigatoriamente 600px de largura (por causa das coisas da interface)
+	if (originalImage.height > 600)
+		originalImage.resize(0, 600)
+	if (originalImage.width > 600)
+		originalImage.resize(600, 0)
 
-			//Redimensiona o canvas para acompanhar o tamanho da imagem
-			theCanvas = createCanvas(Math.max(myImage.width * 2 + 30, 1220), myImage.height + 200).parent("center")
-			resetImage()
-		})
+	//Cria uma copia da imagem carregada, é nela que vamos fazer o processamento
+	myImage = createImage(originalImage.width, originalImage.height)
+	myImage.loadPixels()
+
+	//Redimensiona o canvas para acompanhar o tamanho da imagem
+	theCanvas = createCanvas(Math.max(myImage.width * 2 + 30, 1220), myImage.height + 200).parent("center")
+	resetImage()
 }

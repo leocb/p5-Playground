@@ -37,39 +37,50 @@
 
 <body>
 	<div id='loader'>
-
+		Load a sample image:
+		<select id='samplesUrls'>
+			<option value="images/zelda.jpg">Zelda BoTW</option>
+			<option value="images/gutinho-approves.png">Thumbs Up</option>
+			<option value="images/car.bmp">Car</option>
+			<option value="images/city-low-contrast.bmp">City</option>
+			<option value="images/boat.bmp">Boat</option>
+			<option value="images/fountain.bmp">Fountain</option>
+			<option value="images/hair.bmp">Hair</option>
+		</select>
+		<button onclick="loadSampleImage();">Load Sample</button>
+		or load your own:
 	</div>
 	<table>
 		<tr>
-			<th>Imagem</th>
-			<th>Processamento</th>
-			<th>Máscaras de Convolução</th>
+			<th>Image</th>
+			<th>Processing</th>
+			<th>Convolution Kernel</th>
 		</tr>
 		<tr>
 			<td>
-				<button onclick="resetImage();">Resetar Imagem</button>
+				<button onclick="resetImage();">Reset Image</button>
 				<br>
-				<button onclick="generateBWImage();">Preto e Branco</button>
+				<button onclick="generateBWImage();">Black and white</button>
 			</td>
 			<td>
-				<button onclick="generateBinaryImage();">Binarizar</button>
-				<label for="limiar">Limiar:</label>
+				<button onclick="generateBinaryImage();">Binarize</button>
+				<label for="limiar">Treshold:</label>
 				<input type="number" min="0" max="255" value="128" id="limiar">
 
 				<br>
 
-				<button onclick="generateQuantizedImage();">Quantizar</button>
-				<label for="limiar">Tons:</label>
+				<button onclick="generateQuantizedImage();">Quantize</button>
+				<label for="limiar">Shades:</label>
 				<input type="number" min="0" max="255" value="8" id="tons">
 
 				<br>
 
-				<button onclick="generateEqualizedImage();">Equalizar</button>
+				<button onclick="generateEqualizedImage();">Equalize</button>
 			</td>
 			<td>
-				<label for="kernel">Customizado:</label>
+				<label for="kernel">Custom (JSON):</label>
 				<textarea cols=40 rows="2" id="kernel">{"kernel":[[0,0,0],[0,1,0],[0,0,0]], "normalizer":1, "bias":0}</textarea>
-				<button onclick="kernelImage();">Rodar</button>
+				<button onclick="kernelImage();">Run</button>
 
 				<br> Edge:
 				<button onclick="kernelImage(
@@ -136,7 +147,7 @@
 								[0, 0, 0, 0, 0, 0, 0, 0, 1]],0.1112);">Motion blur</button>
 
 
-				<br> Outros:
+				<br> Others:
 				<button onclick="kernelImage(
 								[[-2,-1,0],
 								[-1,1,1],

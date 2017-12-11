@@ -25,6 +25,9 @@ function draw() {
 	let newGrid = []
 
 	// Run each cell in the grid
+	let gridXSize = grid.length
+	let gridYSize = grid[0].length
+
 	for (let i = 0; i < grid.length; i++) {
 		newGrid.push([])
 		for (let j = 0; j < grid[i].length; j++) {
@@ -35,9 +38,11 @@ function draw() {
 			// sum all neighbors states
 			for (let y = -1; y <= 1; y++) {
 				for (let x = -1; x <= 1; x++) {
-					if ((i + x) in grid && (j + y) in grid[i + x]) {
-						neighbors += grid[i + x][j + y]
-					}
+
+					//Infinite edges wrap around
+					nX = (gridXSize + i + x) % gridXSize
+					nY = (gridYSize + j + y) % gridYSize
+					neighbors += grid[nX][nY]
 				}
 			}
 			// minus the current cell state

@@ -2,6 +2,7 @@
   "name": "Playground",
   "projects": [
     "gameOfLife",
-    "imageProcessor"
+    "imageProcessor",
+    "WebGL"
   ]
 }

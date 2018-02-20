@@ -3,6 +3,7 @@
   "projects": [
     "gameOfLife",
     "imageProcessor",
-    "WebGL"
+    "WebGL",
+    "DXBall"
   ]
 }

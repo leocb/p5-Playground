@@ -33,6 +33,7 @@ class Ball {
 		this.velVector = velocityVector
 		this.accVector = createVector(0, 0)
 		this.radius = radius
+		this.prev = this.pos
 	}
 
 	applyForce(force = createVector(0, 0)) {
@@ -40,6 +41,7 @@ class Ball {
 	}
 
 	update(deltaTime) {
+		this.prev = createVector(this.pos.x, this.pos.y)
 		if (deltaTime < 1000) {
 			this.velVector.add(this.accVector)
 			this.pos.add(p5.Vector.mult(this.velVector, deltaTime))
@@ -48,11 +50,11 @@ class Ball {
 	}
 
 	checkPaddle(paddle = new Paddle) {
-		if (this.pos.y > paddle.y && this.pos.y < paddle.bottom &&
-			this.pos.x >= paddle.left && this.pos.x <= paddle.right) {
-			this.pos.y = paddle.y
+		let intersectPoint = intersect(this.prev.x, this.prev.y, this.pos.x, this.pos.y, paddle.left, paddle.y, paddle.right, paddle.y)
+		console.log(this.prev.x, this.prev.y, this.pos.x, this.pos.y, paddle.left, paddle.y, paddle.right, paddle.y, intersectPoint);
+		if (intersectPoint) {
+			this.pos.y = intersectPoint.y - this.pos.y + intersectPoint.y
 			let mag = this.velVector.mag()
-			console.log(mag);
 			this.velVector = p5.Vector.fromAngle(radians(map(this.pos.x, paddle.left, paddle.right, 210, 330))).mult(Math.min(mag * 1.2, 7))
 		}
 	}
@@ -79,9 +81,91 @@ class Ball {
 
 	draw() {
 		ellipseMode(CENTER)
-		fill(0)
 		noStroke()
+		fill(0)
 		ellipse(this.pos.x, this.pos.y, this.radius)
+		fill(200, 100, 100)
+		ellipse(this.prev.x, this.prev.y, this.radius)
+
+	}
+}
+
+class Brick {
+	constructor(posX, posY, size, color, powerUp) {
+		this.x = posX
+		this.y = posY
+		this.size = size
+		this.color = color
+		this.powerUp = powerUp
+	}
+
+	setDrawMode() {
+		rectMode(CENTER)
+		noStroke()
+	}
+
+	draw() {
+		fill(color)
+		rect(x, y, size * 2, size)
+	}
+
+	checkBounds(ball) {
+
+	}
+}
+
+// line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
+function intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+	if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) { // one of the lines is length 0
+		return false
+	}
+	let denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
+	let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator
+	let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator
+	let x = x1 + ua * (x2 - x1)
+	let y = y1 + ua * (y2 - y1)
+	if (x === -Infinity || x === Infinity || y === -Infinity || y === Infinity) {
+		return false
+	}
+	return createVector(x, y)
+}
+
+
+class PowerUp {
+	constructor(type = powerTypes) {
+		this.type = type
+	}
+}
+
+const powerTypes = {
+	paddle: {
+		GROW: 'GROW',
+		SHRINK: 'SHRINK',
+		TINY: 'TINY',
+		LASER: 'LASER',
+		CATCHER: 'CATCHER',
+		TILT: 'TILT',
+	},
+	ball: {
+		SLOWER: 'SLOWER',
+		FASTER: 'FASTER',
+		BIG: 'BIG',
+		TINY: 'TINY',
+		FIRE: 'FIRE',
+		UNSTOPPABLE: 'UNSTOPPABLE',
+		SPLIT: 'SPLIT',
+		EIGHT: 'EIGHT',
+		ROAMING: 'ROAMING',
+	},
+	brick: {
+		GROWEXPLOSION: 'GROWEXPLOSION',
+		EXPLODE: 'EXPLODE',
+		PUSHER: 'PUSHER',
+		WEAKEN: 'WEAKEN',
+	},
+	player: {
+		ONEUP: 'ONEUP',
+		DIE: 'DIE',
 	}
 }
 

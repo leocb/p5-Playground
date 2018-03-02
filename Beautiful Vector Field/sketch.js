@@ -8,8 +8,8 @@ let yCount = 0
 let xCount = 0
 
 // parameters
-let particlesCount = 1500 // how many "lines" on screen
-let vectorFieldGridSize = 20 // distance between vectors, higher = more resolution = thighter path
+let particlesCount = window.innerWidth < 800 ? 200 : 1500 // how many "lines" on screen
+let vectorFieldGridSize = 25 // distance between vectors, higher = more resolution = thighter path
 let deltaP = 0.03 // difference between vector neighboors, higher = more caos!
 let diffZ = 0.001 // speed to change the vectors, higher = faster
 
@@ -64,7 +64,7 @@ function draw() {
 		deltaTime = 0
 
 	// particles color
-	stroke(offZ * 500 % 360, 200, 127, 1)
+	stroke(offZ * 500 % 360, 255, 127, 1)
 
 	//Update particles
 	for (let i = 0; i < particlesCount; i++) {

@@ -1,9 +1,10 @@
 {
   "name": "Playground",
   "projects": [
-    "gameOfLife",
-    "imageProcessor",
+    "Beautiful Vector Field",
+    "Conway Game of Life",
     "WebGL",
-    "DXBall"
+    "DX Ball",
+    "Image Processing"
   ]
 }

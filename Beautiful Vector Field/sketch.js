@@ -8,15 +8,15 @@ let yCount = 0
 let xCount = 0
 
 // parameters
-let particlesCount = window.innerWidth < 800 ? 200 : 1500 // how many "lines" on screen
-let vectorFieldGridSize = 25 // distance between vectors, higher = more resolution = thighter path
-let deltaP = 0.03 // difference between vector neighboors, higher = more caos!
+let particlesCount = window.innerWidth < 800 ? 150 : 1500 // how many "lines" on screen
+let vectorFieldGridSize = 20 // distance between vectors, higher = more resolution = thighter path
+let deltaP = 0.04 // difference between vector neighboors, higher = more caos!
 let diffZ = 0.001 // speed to change the vectors, higher = faster
 
 
 function setup() {
 
-	createCanvas(window.innerWidth - 20, window.innerHeight - 20)
+	createCanvas(window.innerWidth - 40, window.innerHeight)
 
 	// precache the vector field loop 'until' value
 	yCount = Math.floor(height / vectorFieldGridSize)
@@ -25,36 +25,33 @@ function setup() {
 	// Create the vector field grid
 	for (let y = 0; y <= yCount; y++) {
 		for (let x = 0; x <= xCount; x++) {
-			vField.push(new p5.Vector(0, 0, 0))
+			vField.push(new p5.Vector(0, 0))
 		}
 	}
 
 	// Create the particles
 	for (let i = 0; i < particlesCount; i++) {
-		particles.push(new Particle(new p5.Vector(random(width), random(height)), p5.Vector.random2D()))
+		particles.push(new Particle(new p5.Vector(random(width), random(height)), p5.Vector.random2D().setMag(10)))
 	}
 
 	// Sketch settings
-	frameRate(60)
 	strokeWeight(1)
 	colorMode(HSB)
+	textSize(16);
+	textAlign(LEFT, TOP)
+	rectMode(CORNER)
 }
 
 function draw() {
-
-	// Slowly fade the bg to white, this create a nice effect on screen
-	background(0, 0, 255, 0.1)
-
 	//Recalculate Vector Field angles using a simple 3D perlin noise
 	offZ += diffZ
-	for (let y = 0; y <= yCount; y++) {
-		let offY = y * deltaP
+	let y, x, offY, offX
+	for (y = 0; y <= yCount; y++) {
+		offY = y * deltaP
 
-		for (let x = 0; x <= xCount; x++) {
-			let offX = x * deltaP
-			let index = x + y * xCount
-
-			vField[index] = new p5.Vector.fromAngle(noise(offX, offY, offZ) * TWO_PI * 6)
+		for (x = 0; x <= xCount; x++) {
+			offX = x * deltaP
+			vField[x + y * xCount] = p5.Vector.fromAngle(noise(offX, offY, offZ) * TWO_PI * 6).setMag(2.2)
 		}
 	}
 
@@ -63,19 +60,26 @@ function draw() {
 	if (deltaTime === Infinity)
 		deltaTime = 0
 
+	// Slowly fade the bg to white, this create a nice effect on screen
+	background(0, 0, 255, 0.1)
+
+	// Show fps on screen
+	noStroke()
+	fill(255)
+	rect(0, 0, 85, 20)
+	fill(0)
+	text('FPS: ' + frameRate().toFixed(1), 0, 0)
+
 	// particles color
 	stroke(offZ * 500 % 360, 255, 127, 1)
-
 	//Update particles
 	for (let i = 0; i < particlesCount; i++) {
-		let particle = particles[i]
 
 		//find the vector field closest to the particle based on its position
-		let vFieldIndex = Math.floor(particle.pos.x / vectorFieldGridSize) + Math.floor(particle.pos.y / vectorFieldGridSize) * Math.floor(width / vectorFieldGridSize)
+		particles[i].applyForce(vField[Math.floor(particles[i].pos.x / vectorFieldGridSize) + Math.floor(particles[i].pos.y / vectorFieldGridSize) * xCount])
 
-		particle.applyForce(vField[vFieldIndex].setMag(2.2))
-		particle.update(deltaTime)
-		particle.draw()
+		particles[i].update(deltaTime)
+		particles[i].draw()
 	}
 }
 
@@ -98,13 +102,16 @@ class Particle {
 
 	update(deltaTime) {
 		this.prevPos = this.pos.copy()
-
-		this.vel.add(this.acc)
-		this.vel.limit(this.maxSpeed)
-		this.pos.add(this.vel.mult(deltaTime))
 		this.stayInBounds()
 
-		this.acc = new p5.Vector(0, 0)
+		// The line bellow is the time-corrected implementation of particle movement
+		// but it's commented out as android phones don't like it very much (don't know why)
+		// instead, we use predictive movement, this makes the particles insentive to the "real" time
+		// but at least android phones can see the demo too.
+		// this.pos.add(this.vel.add(this.acc).limit(this.maxSpeed).mult(deltaTime))
+
+		this.pos.add(this.vel.add(this.acc).limit(this.maxSpeed))
+		this.acc = this.acc.mult(0)
 	}
 
 	// Draw
@@ -117,18 +124,22 @@ class Particle {
 		if (this.pos.x > width) {
 			this.pos.x -= width
 			this.prevPos = this.pos.copy()
+			return
 		}
 		if (this.pos.x < 0) {
 			this.pos.x += width
 			this.prevPos = this.pos.copy()
+			return
 		}
 		if (this.pos.y > height) {
 			this.pos.y -= height
 			this.prevPos = this.pos.copy()
+			return
 		}
 		if (this.pos.y < 0) {
 			this.pos.y += height
 			this.prevPos = this.pos.copy()
+			return
 		}
 	}
 

@@ -6,9 +6,10 @@ let offZ = 0
 let deltaTime = 0
 let yCount = 0
 let xCount = 0
+let smoothFps = []
 
 // parameters
-let particlesCount = window.innerWidth < 800 ? 150 : 1500 // how many "lines" on screen
+let particlesCount = 500 // how many "lines" on screen, we start with 500 and increase/decrease them dynamicly
 let vectorFieldGridSize = 20 // distance between vectors, higher = more resolution = thighter path
 let deltaP = 0.04 // difference between vector neighboors, higher = more caos!
 let diffZ = 0.001 // speed to change the vectors, higher = faster
@@ -40,6 +41,9 @@ function setup() {
 	textSize(16);
 	textAlign(LEFT, TOP)
 	rectMode(CORNER)
+
+	// Extremly important for mobile, without this, the resolution may be to high to draw at 60fps:
+	pixelDensity(1)
 }
 
 function draw() {
@@ -63,15 +67,32 @@ function draw() {
 	// Slowly fade the bg to white, this create a nice effect on screen
 	background(0, 0, 255, 0.1)
 
-	// Show fps on screen
+	// Show fps on screen and dynamic particle system
+	smoothFps.unshift(frameRate())
+	if (smoothFps.length > 60)
+		smoothFps.pop()
+
+	let fps = smoothFps.reduce((i, t) => i += t) / smoothFps.length
+
+	if (deltaTime > 1.01) {
+		particles.pop()
+	} else if (deltaTime < 1) {
+		particles.push(particles[0].copy())
+	}
+	particlesCount = particles.length
+
+
+
 	noStroke()
 	fill(255)
-	rect(0, 0, 85, 20)
+	rect(0, 0, width, 20)
 	fill(0)
-	text('FPS: ' + frameRate().toFixed(1), 0, 0)
+	text('FPS: ' + fps.toFixed(1), 0, 0)
+	text('DT: ' + deltaTime.toFixed(2), 100, 0)
+	text('Particle Count: ' + particlesCount, 200, 0)
 
 	// particles color
-	stroke(offZ * 500 % 360, 255, 127, 1)
+	stroke(offZ * 500 % 360, 200, 127, 1)
 	//Update particles
 	for (let i = 0; i < particlesCount; i++) {
 
@@ -95,6 +116,10 @@ class Particle {
 		this.maxSpeed = 10
 	}
 
+	copy() {
+		return new Particle(new p5.Vector(this.pos.x, this.pos.y), p5.Vector.random2D())
+	}
+
 	//Light Phys engine
 	applyForce(vector) {
 		this.acc.add(vector)
@@ -107,7 +132,7 @@ class Particle {
 		// The line bellow is the time-corrected implementation of particle movement
 		// but it's commented out as android phones don't like it very much (don't know why)
 		// instead, we use predictive movement, this makes the particles insentive to the "real" time
-		// but at least android phones can see the demo too.
+		// but at least lower-end android phones can see the demo too.
 		// this.pos.add(this.vel.add(this.acc).limit(this.maxSpeed).mult(deltaTime))
 
 		this.pos.add(this.vel.add(this.acc).limit(this.maxSpeed))

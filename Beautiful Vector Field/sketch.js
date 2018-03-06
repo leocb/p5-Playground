@@ -74,7 +74,7 @@ function draw() {
 
 	let fps = smoothFps.reduce((i, t) => i += t) / smoothFps.length
 
-	if (deltaTime > 1.01) {
+	if (deltaTime > 1.01 && particles.length > 100) {
 		particles.pop()
 	} else if (deltaTime < 1) {
 		particles.push(particles[0].copy())
@@ -88,8 +88,8 @@ function draw() {
 	rect(0, 0, width, 20)
 	fill(0)
 	text('FPS: ' + fps.toFixed(1), 0, 0)
-	text('DT: ' + deltaTime.toFixed(2), 100, 0)
-	text('Particle Count: ' + particlesCount, 200, 0)
+	text('DT: ' + deltaTime.toFixed(2), 90, 0)
+	text('Particles: ' + particlesCount, 165, 0)
 
 	// particles color
 	stroke(offZ * 500 % 360, 200, 127, 1)

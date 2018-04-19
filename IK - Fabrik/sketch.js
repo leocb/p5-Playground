@@ -9,10 +9,16 @@ let tipJoint
 let rootJoint
 let target
 let rootPoint
+let halfScreenWidth
+let halfScreenHeight
 
 function setup() {
 	createCanvas(windowWidth - 40, windowHeight);
+	halfScreenWidth = (windowWidth - 40) / 2
+	halfScreenHeight = windowHeight / 2
 	pixelDensity(1)
+	textAlign(CENTER, CENTER)
+
 
 	target = new Point2d(0, 0)
 
@@ -76,6 +82,9 @@ function draw() {
 
 	// Draw everybody
 	background(255)
+	noStroke()
+	text('Move your mouse or', halfScreenWidth, halfScreenHeight - 10)
+	text('Touch and drag on the screen', halfScreenWidth, halfScreenHeight + 10)
 	target.draw()
 	joints[0].draw(true)
 	for (let i = 1; i < jointCount; i++) {

@@ -7,10 +7,15 @@ let totalLength = 1
 let joints = []
 let tipJoint
 let target
+let halfScreenWidth
+let halfScreenHeight
 
 function setup() {
 	createCanvas(windowWidth - 40, windowHeight);
+	halfScreenWidth = (windowWidth - 40) / 2
+	halfScreenHeight = windowHeight / 2
 	pixelDensity(1)
+	textAlign(CENTER, CENTER)
 
 	target = new Point2d(0, 0)
 
@@ -54,12 +59,15 @@ function draw() {
 		movement_vector = { x: toTip.y * axis.z, y: -toTip.x * axis.z } // cross
 		gradient = (movement_vector.x * toTarget.x + movement_vector.y * toTarget.y) // dot
 
-		joint.angle -= radians(gradient / 20) // resulting gradient
+		joint.angle -= Math.max(Math.min(radians(gradient / 20), 50), -50) // resulting gradient
 
 	}
 
 	// Draw everybody
 	background(255)
+	noStroke()
+	text('Move your mouse or', halfScreenWidth, halfScreenHeight - 10)
+	text('Touch and drag on the screen', halfScreenWidth, halfScreenHeight + 10)
 	target.draw()
 	for (let i = 0; i < jointCount; i++) {
 		joints[i].draw()

@@ -14,9 +14,10 @@ let halfScreenHeight
 
 function setup() {
 	createCanvas(windowWidth - 40, windowHeight);
-	halfScreenWidth = windowWidth / 2
+	halfScreenWidth = (windowWidth - 40) / 2
 	halfScreenHeight = windowHeight / 2
 	pixelDensity(1)
+	textAlign(CENTER, CENTER)
 
 	target = new Point2d(0, 0)
 
@@ -35,8 +36,6 @@ function setup() {
 	rootJoint = joints[0]
 	rootPoint = new Point2d(width / 2, height / 2)
 
-	textAlign(CENTER, CENTER)
-
 }
 
 function draw() {
@@ -52,34 +51,17 @@ function draw() {
 	// The distance between root and target
 	let distRootTarget = distanceBetween(joints[0], target)
 
-	// Check whether the target is within reach
-	if (false && distRootTarget > totalLength) {
-
-		// The target is unreachable
-		// Calculate the angle between root and target
-		let angle = pointsAtan2(rootJoint, target)
-
-		// Move all the joints to point at target
-		rootJoint.moveRootToAtAngle(rootPoint, angle)
-		for (let i = 1; i < jointCount; i++) {
-			joints[i].moveRootToAtAngle(joints[i - 1].getTip(), angle)
-		}
-
-	} else {
-		// The target is reachable
-		// Backward reaching
-		tipJoint.moveTipToAtAngle(target, pointsAtan2(tipJoint, target))
-		for (let i = jointCount - 2; i >= 0; i--) {
-			joints[i].moveTipToAtAngle(joints[i + 1], pointsAtan2(joints[i], joints[i + 1]), joints[i + 1].angle)
-		}
-		// Forward reaching
-		//rootJoint.moveRootToAtAngle(rootPoint, pointsAtan2(rootPoint, joints[1]))
-		for (let i = 1; i < jointCount - 1; i++) {
-			joints[i].moveRootToAtAngle(joints[i - 1].getTip(), pointsAtan2(joints[i], joints[i + 1]))
-		}
-		tipJoint.moveRootToAtAngle(joints[jointCount - 2].getTip(), pointsAtan2(tipJoint, target))
-
+	// Backward reaching
+	tipJoint.moveTipToAtAngle(target, pointsAtan2(tipJoint, target))
+	for (let i = jointCount - 2; i >= 0; i--) {
+		joints[i].moveTipToAtAngle(joints[i + 1], pointsAtan2(joints[i], joints[i + 1]), joints[i + 1].angle)
 	}
+	// Forward reaching
+	//rootJoint.moveRootToAtAngle(rootPoint, pointsAtan2(rootPoint, joints[1]))
+	for (let i = 1; i < jointCount - 1; i++) {
+		joints[i].moveRootToAtAngle(joints[i - 1].getTip(), pointsAtan2(joints[i], joints[i + 1]))
+	}
+	tipJoint.moveRootToAtAngle(joints[jointCount - 2].getTip(), pointsAtan2(tipJoint, target))
 
 
 	// Draw everybody

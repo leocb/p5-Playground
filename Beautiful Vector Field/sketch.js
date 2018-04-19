@@ -6,7 +6,7 @@ let offZ = 0
 let deltaTime = 0
 let yCount = 0
 let xCount = 0
-let smoothFps = []
+let fpsArray = []
 
 // parameters
 let particlesCount = 500 // how many "lines" on screen, we start with 500 and increase/decrease them dynamicly
@@ -65,29 +65,20 @@ function draw() {
 		deltaTime = 0
 
 	// Slowly fade the bg to white, this create a nice effect on screen
-	background(0, 0, 255, 0.1)
+	background(0, 0, 255, 0.08)
 
 	// Show fps on screen and dynamic particle system
-	smoothFps.unshift(frameRate())
-	if (smoothFps.length > 60)
-		smoothFps.pop()
+	fpsArray.unshift(frameRate())
+	if (fpsArray.length > 120)
+		fpsArray.pop()
 
-	let fps = smoothFps.reduce((i, t) => i += t) / smoothFps.length
-
-	if (deltaTime > 1.01 && particles.length > 100) {
-		particles.pop()
-	} else if (deltaTime < 1) {
-		particles.push(particles[0].copy())
-	}
-	particlesCount = particles.length
-
-
+	let averageFPS = fpsArray.reduce((i, t) => i += t) / fpsArray.length
 
 	noStroke()
 	fill(255)
 	rect(0, 0, width, 20)
 	fill(0)
-	text('FPS: ' + fps.toFixed(1), 0, 0)
+	text('FPS: ' + averageFPS.toFixed(1), 0, 0)
 	text('DT: ' + deltaTime.toFixed(2), 90, 0)
 	text('Particles: ' + particlesCount, 165, 0)
 

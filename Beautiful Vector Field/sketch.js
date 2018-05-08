@@ -12,7 +12,7 @@ let fpsArray = []
 let particlesCount = 500 // how many "lines" on screen, we start with 500 and increase/decrease them dynamicly
 let vectorFieldGridSize = 20 // distance between vectors, higher = more resolution = thighter path
 let deltaP = 0.04 // difference between vector neighboors, higher = more caos!
-let diffZ = 0.001 // speed to change the vectors, higher = faster
+let diffZ = 0.0005 // speed to change the vectors, higher = faster
 
 
 function setup() {
@@ -65,7 +65,7 @@ function draw() {
 		deltaTime = 0
 
 	// Slowly fade the bg to white, this create a nice effect on screen
-	background(0, 0, 255, 0.08)
+	background(0, 0, 255, 0.5)
 
 	// Show fps on screen and dynamic particle system
 	fpsArray.unshift(frameRate())
@@ -76,8 +76,12 @@ function draw() {
 
 	noStroke()
 	fill(255)
-	rect(0, 0, width, 20)
+	rect(0, 0, width, 40)
 	fill(0)
+
+	noStroke();
+	text('Click your mouse or Touch and drag on the screen', 0, 20)
+
 	text('FPS: ' + averageFPS.toFixed(1), 0, 0)
 	text('DT: ' + deltaTime.toFixed(2), 90, 0)
 	text('Particles: ' + particlesCount, 165, 0)
@@ -89,6 +93,12 @@ function draw() {
 
 		//find the vector field closest to the particle based on its position
 		particles[i].applyForce(vField[Math.floor(particles[i].pos.x / vectorFieldGridSize) + Math.floor(particles[i].pos.y / vectorFieldGridSize) * xCount])
+
+		if (mouseIsPressed) {
+
+			particles[i].applyForce(p5.Vector.fromAngle(Math.atan2(mouseY - particles[i].pos.y, mouseX - particles[i].pos.x) + PI).mult(20000 / (Math.pow(mouseX - particles[i].pos.x, 2) + Math.pow(mouseY - particles[i].pos.y, 2))))
+		}
+
 
 		particles[i].update(deltaTime)
 		particles[i].draw()
@@ -148,12 +158,12 @@ class Particle {
 			return
 		}
 		if (this.pos.y > height) {
-			this.pos.y -= height
+			this.pos.y -= height - 40
 			this.prevPos = this.pos.copy()
 			return
 		}
-		if (this.pos.y < 0) {
-			this.pos.y += height
+		if (this.pos.y < 40) {
+			this.pos.y += height - 40
 			this.prevPos = this.pos.copy()
 			return
 		}

@@ -25,6 +25,13 @@ function setup() {
 	noStroke()
 }
 
+function mousePressed() {
+	grid[Math.floor(mouseX / spacing)][Math.floor(mouseY / spacing)] = 1
+	grid[Math.floor(mouseX / spacing) + 1][Math.floor(mouseY / spacing) + 1] = 1
+	grid[Math.floor(mouseX / spacing) - 1][Math.floor(mouseY / spacing) - 1] = 1
+	grid[Math.floor(mouseX / spacing) - 1][Math.floor(mouseY / spacing) + 1] = 1
+	grid[Math.floor(mouseX / spacing) + 1][Math.floor(mouseY / spacing) - 1] = 1
+}
 
 function draw() {
 

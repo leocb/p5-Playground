@@ -59,13 +59,13 @@ function draw() {
 		}
 	}
 
-	// calculate the delta time based on framerate, target is 60fps
-	deltaTime = 60 / frameRate()
+	// calculate the delta time based on framerate, target is 50fps
+	deltaTime = 50 / frameRate()
 	if (deltaTime === Infinity)
 		deltaTime = 0
 
 	// Slowly fade the bg to white, this create a nice effect on screen
-	background(0, 0, 255, 0.5)
+	background(0, 0, 255, 0.1)
 
 	// Show fps on screen and dynamic particle system
 	fpsArray.unshift(frameRate())
@@ -82,9 +82,9 @@ function draw() {
 	noStroke();
 	text('Click your mouse or Touch and drag on the screen', 0, 20)
 
-	text('FPS: ' + averageFPS.toFixed(1), 0, 0)
-	text('DT: ' + deltaTime.toFixed(2), 90, 0)
-	text('Particles: ' + particlesCount, 165, 0)
+	text('FPS: ' + averageFPS.toFixed(1), 0, 4)
+	text('DT: ' + deltaTime.toFixed(2), 90, 4)
+	text('Particles: ' + particlesCount, 165, 4)
 
 	// particles color
 	stroke(offZ * 500 % 360, 200, 127, 1)
